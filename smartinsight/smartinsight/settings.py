@@ -15,6 +15,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+IS_VERCEL = any(os.getenv(name) for name in ("VERCEL", "VERCEL_ENV", "VERCEL_URL"))
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -105,7 +106,7 @@ DATABASES = {
 }
 
 # On Vercel, fallback sqlite DB should be writable.
-if os.getenv("VERCEL") and not os.getenv("DATABASE_URL"):
+if IS_VERCEL and not os.getenv("DATABASE_URL"):
     DATABASES["default"]["NAME"] = "/tmp/db.sqlite3"
 
 try:
@@ -161,8 +162,9 @@ if HAS_WHITENOISE:
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-if os.getenv("VERCEL"):
+if IS_VERCEL:
     MEDIA_ROOT = Path("/tmp/media")
+MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 
 # Reverse proxy settings for Vercel
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

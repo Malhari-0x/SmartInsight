@@ -12,9 +12,11 @@ def _error(message, code):
     return Response({"detail": message}, status=code)
 
 
-def _load_user_dataframe(user):
+def _load_user_dataframe(user, allow_empty=False):
     dataset = UploadedDataset.objects.filter(user=user).order_by("-uploaded_at").first()
     if not dataset:
+        if allow_empty:
+            return None, None
         return None, _error("No dataset uploaded yet.", status.HTTP_404_NOT_FOUND)
 
     try:
@@ -51,9 +53,19 @@ class KPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        df, error_response = _load_user_dataframe(request.user)
+        df, error_response = _load_user_dataframe(request.user, allow_empty=True)
         if error_response:
             return error_response
+        if df is None:
+            return Response(
+                {
+                    "total_revenue": 0,
+                    "avg_sales": 0,
+                    "row_count": 0,
+                    "monthly_sales": {},
+                    "message": "Upload a dataset to view KPI metrics.",
+                }
+            )
         error_response = _validate_columns(df, ["sales"])
         if error_response:
             return error_response

@@ -1,3 +1,6 @@
+from pathlib import Path
+
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -20,7 +23,15 @@ class UploadDatasetView(APIView):
     def post(self, request):
         serializer = DatasetSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        dataset = serializer.save(user=request.user)
+        Path(settings.MEDIA_ROOT).mkdir(parents=True, exist_ok=True)
+
+        try:
+            dataset = serializer.save(user=request.user)
+        except Exception as exc:
+            return Response(
+                {"detail": f"Unable to save uploaded file: {exc}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
 
         cleanup_note = "Uploaded successfully."
         try:

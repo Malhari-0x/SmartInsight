@@ -104,6 +104,10 @@ DATABASES = {
     }
 }
 
+# On Vercel, fallback sqlite DB should be writable.
+if os.getenv("VERCEL") and not os.getenv("DATABASE_URL"):
+    DATABASES["default"]["NAME"] = "/tmp/db.sqlite3"
+
 try:
     import dj_database_url
 except ImportError:
@@ -149,7 +153,8 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 if HAS_WHITENOISE:
     STORAGES = {
         "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+            # Avoid runtime manifest lookup failures on serverless function instances.
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
         },
     }
 

@@ -20,4 +20,14 @@ if str(PROJECT_ROOT) not in sys.path:
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'smartinsight.settings')
 
+# For demo deployments without DATABASE_URL, initialize writable sqlite in /tmp.
+if os.getenv("VERCEL") and not os.getenv("DATABASE_URL"):
+    db_file = Path("/tmp/db.sqlite3")
+    if not db_file.exists():
+        import django
+        from django.core.management import call_command
+
+        django.setup()
+        call_command("migrate", interactive=False, verbosity=0, run_syncdb=True)
+
 application = get_wsgi_application()

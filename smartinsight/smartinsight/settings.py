@@ -153,6 +153,9 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 if HAS_WHITENOISE:
     STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
         "staticfiles": {
             # Avoid runtime manifest lookup failures on serverless function instances.
             "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",

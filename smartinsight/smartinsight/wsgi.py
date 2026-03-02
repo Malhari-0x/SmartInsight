@@ -29,5 +29,11 @@ if os.getenv("VERCEL") and not os.getenv("DATABASE_URL"):
 
         django.setup()
         call_command("migrate", interactive=False, verbosity=0, run_syncdb=True)
+        call_command(
+            "seed_demo_user",
+            username="User",
+            password="User@1234",
+            verbosity=0,
+        )
 
 application = get_wsgi_application()

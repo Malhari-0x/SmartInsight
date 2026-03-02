@@ -1,0 +1,7 @@
+env/
+venv/
+__pycache__/
+*.pyc
+*.sqlite3
+smartinsight/db.sqlite3
+smartinsight/media/

@@ -1,0 +1,1 @@
+-r smartinsight/requirements.txt

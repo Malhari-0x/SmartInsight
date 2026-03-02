@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0a1022">
+    <title>SmartInsight | Analytics Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'dashboard/style.css' %}?v=20260302c">
+    <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="{% static 'dashboard/app.js' %}?v=20260302b"></script>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="ambient ambient-c"></div>
+
+    <header class="topbar reveal">
+        <div class="brand-wrap">
+            <div class="brand">
+                <span class="brand-mark"></span>
+                <span>SmartInsight</span>
+            </div>
+            <p class="brand-sub">Creative analytics cockpit for modern data teams</p>
+        </div>
+        <div class="topbar-right">
+            <span class="chip">Realtime Workspace</span>
+            <span class="chip chip-strong">JWT Secured API</span>
+        </div>
+    </header>
+
+    <main class="container reveal">
+        <section class="hero reveal">
+            <div class="hero-content panel">
+                <p class="eyebrow">Business Intelligence Hub</p>
+                <h1>Turn raw CSV uploads into decisions with a dark, high-clarity command desk.</h1>
+                <p class="lead">
+                    Authenticate, upload your dataset, and run KPI trends, customer segmentation,
+                    anomaly detection, and 30-day forecasting inside one modern analytics surface.
+                </p>
+                <div class="hero-tags">
+                    <span>Interactive KPI Charts</span>
+                    <span>Segment Discovery</span>
+                    <span>Anomaly Signals</span>
+                    <span>Forecast Insights</span>
+                </div>
+            </div>
+            <aside class="hero-metrics panel">
+                <p class="eyebrow">Workflow Steps</p>
+                <ul>
+                    <li>1. Generate JWT access token</li>
+                    <li>2. Upload and normalize CSV</li>
+                    <li>3. Review KPI and model outputs</li>
+                </ul>
+                <div class="hint">
+                    Recommended columns:
+                    <code>sales</code>, <code>date</code>, <code>customer_id</code>, optional <code>month</code>.
+                </div>
+            </aside>
+        </section>
+
+        <section class="split">
+            <article class="panel reveal elevated">
+                <div class="section-head">
+                    <h2>Generate JWT</h2>
+                    <span class="step-pill">Step 1</span>
+                </div>
+                <form id="token-form" class="stack">
+                    <label>Username
+                        <input id="username" type="text" required placeholder="Enter username">
+                    </label>
+                    <label>Password
+                        <input id="password" type="password" required placeholder="Enter password">
+                    </label>
+                    <button id="token-form-button" type="submit">Get Access Token</button>
+                </form>
+                <div class="demo-credentials" aria-label="Demo credentials for testing">
+                    <p class="demo-title">Demo Credentials</p>
+                    <p><span>Username</span><code>User</code></p>
+                    <p><span>Password</span><code>User@1234</code></p>
+                </div>
+                <p id="token-status" class="status" data-state="neutral"></p>
+            </article>
+
+            <article class="panel reveal elevated">
+                <div class="section-head">
+                    <h2>Upload Dataset</h2>
+                    <span class="step-pill">Step 2</span>
+                </div>
+                <form id="upload-form" class="stack">
+                    <label>CSV File
+                        <input id="dataset-file" type="file" accept=".csv" required>
+                    </label>
+                    <button id="upload-form-button" type="submit">Upload and Normalize</button>
+                </form>
+                <p id="upload-status" class="status" data-state="neutral"></p>
+            </article>
+        </section>
+
+        <section class="panel reveal elevated">
+            <div class="section-head">
+                <h2>KPI Overview</h2>
+                <span class="step-pill">Live Summary</span>
+                <button id="refresh-kpi" type="button">Refresh KPI</button>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span>Total Revenue</span>
+                    <strong id="kpi-revenue">-</strong>
+                </div>
+                <div class="kpi-card">
+                    <span>Average Sales</span>
+                    <strong id="kpi-average">-</strong>
+                </div>
+                <div class="kpi-card">
+                    <span>Rows Processed</span>
+                    <strong id="kpi-rows">-</strong>
+                </div>
+            </div>
+            <div class="chart-wrap">
+                <canvas id="monthly-chart"></canvas>
+            </div>
+        </section>
+
+        <section class="split">
+            <article class="panel reveal elevated">
+                <div class="section-head">
+                    <h2>Segmentation</h2>
+                    <button id="load-segmentation" type="button">Run</button>
+                </div>
+                <div id="segmentation-output" class="result-surface">
+                    <p class="table-empty">No data loaded yet. Click Run to fetch segmentation data.</p>
+                </div>
+            </article>
+            <article class="panel reveal elevated">
+                <div class="section-head">
+                    <h2>Anomaly Detection</h2>
+                    <button id="load-anomaly" type="button">Run</button>
+                </div>
+                <div id="anomaly-output" class="result-surface">
+                    <p class="table-empty">No data loaded yet. Click Run to detect anomalies.</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="panel reveal elevated">
+            <div class="section-head">
+                <h2>Forecast (Next 30 Days)</h2>
+                <button id="load-forecast" type="button">Run</button>
+            </div>
+            <div id="forecast-output" class="result-surface">
+                <p class="table-empty">No data loaded yet. Click Run to generate forecast.</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
